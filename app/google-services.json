@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "18582057917",
+    "firebase_url": "https://selfpuzzle-32f6c.firebaseio.com",
+    "project_id": "selfpuzzle-32f6c",
+    "storage_bucket": "selfpuzzle-32f6c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18582057917:android:20f417fde8526de5",
+        "android_client_info": {
+          "package_name": "com.example.selfpuzzle"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "18582057917-k4u92mem43li7keube88aq9e3tgtnbnj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.selfpuzzle",
+            "certificate_hash": "2cae7588bdd1bc379e57e98044d69c341ca4457e"
+          }
+        },
+        {
+          "client_id": "18582057917-e6sdnvrtsjcqrfjr38c9tjnju4gh99eu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBdkWKUCGpilVWUTtsr2ZHuCaPIuvHoejk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "18582057917-e6sdnvrtsjcqrfjr38c9tjnju4gh99eu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
