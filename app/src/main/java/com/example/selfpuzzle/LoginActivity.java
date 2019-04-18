@@ -71,12 +71,6 @@ public class LoginActivity extends AppCompatActivity {
         btn_play_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               /* Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-                try {
-                    // Google Sign In was successful, authenticate with Firebase
-                    GoogleSignInAccount account = task.getResult(ApiException.class);
-                    firebaseAuthWithGoogle(account);
-                }*/
 
 
             }
