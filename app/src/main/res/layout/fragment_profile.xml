@@ -8,7 +8,8 @@
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@+id/cardview">
         
         
         <RelativeLayout
@@ -49,6 +50,30 @@
         </RelativeLayout>
         
     </android.support.v7.widget.CardView>
+
+    <RelativeLayout
+        android:layout_below="@+id/cardview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Arkadaş İstekleri"
+            android:textAlignment="center"
+            android:textSize="28sp"
+            android:id="@+id/arkadasistekText"
+            android:textColor="@color/colorPrimaryDark"
+            />
+        <android.support.v7.widget.RecyclerView
+            android:layout_below="@id/arkadasistekText"
+            android:id="@+id/arkadasIstekleri"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+
+
+    </RelativeLayout>
 
 
 </RelativeLayout>

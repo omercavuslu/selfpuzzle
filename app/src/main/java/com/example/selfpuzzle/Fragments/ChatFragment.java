@@ -98,7 +98,7 @@ public class ChatFragment extends Fragment {
                         }
                     }
                 }
-                userAdapter = new UserAdapter(getContext(), mUsers, true);
+                userAdapter = new UserAdapter(getContext(), mUsers, true,3,"");
                 recyclerView.setAdapter(userAdapter);
             }
 
