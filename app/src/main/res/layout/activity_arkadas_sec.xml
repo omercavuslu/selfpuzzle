@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ArkadasSecActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/txt_arkadas_sec"
+        android:text="Resmi Göndermek İçin Arkadaş Seçiniz"
+        android:textSize="30dp"
+        android:textColor="@color/colorPrimaryDarkk"
+        android:padding="10dp"
+        android:textAlignment="center"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_below="@+id/txt_arkadas_sec"
+        android:hint="Search..."
+        android:id="@+id/arkadasSec_search_users"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_below="@id/arkadasSec_search_users"
+        android:id="@+id/arkadasSec_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+</RelativeLayout>

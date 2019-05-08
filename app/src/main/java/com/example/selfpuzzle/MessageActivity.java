@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -47,25 +48,19 @@ public class MessageActivity extends AppCompatActivity {
 
     CircleImageView profile_image;
     TextView username;
-
     FirebaseUser fuser;
     DatabaseReference reference;
-
     ImageButton btn_send;
     EditText text_send;
-
     MessageAdapter messageAdapter;
     List<Chat> mchat;
-
     RecyclerView recyclerView;
-
     Intent intent;
-
     ValueEventListener seenListener;
-
     String userid;
-
     APIService apiService;
+    String url;
+    int gelen;
 
     boolean notify = false;
 
@@ -73,6 +68,18 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+        fuser = FirebaseAuth.getInstance().getCurrentUser();
+        intent = getIntent();
+        userid = intent.getStringExtra("userid");
+        gelen = intent.getIntExtra("gelen",3);
+        Log.i("aasd","messageURL GELEN INT "+gelen);
+
+
+        if (gelen==4){
+            url=intent.getStringExtra("url");
+            Log.i("aasd","message URL  "+url);
+            sendMessage(fuser.getUid(), userid, url);
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -97,11 +104,10 @@ public class MessageActivity extends AppCompatActivity {
         profile_image = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);
         btn_send = findViewById(R.id.btn_send);
-        text_send = findViewById(R.id.text_send);
+        text_send = findViewById(R.id.txt_send);
 
-        intent = getIntent();
-        userid = intent.getStringExtra("userid");
-        fuser = FirebaseAuth.getInstance().getCurrentUser();
+
+
 
         btn_send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,6 +180,7 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("receiver", receiver);
         hashMap.put("message", message);
         hashMap.put("isseen", false);
+        hashMap.put("resimMi",false);
 
         reference.child("Chats").push().setValue(hashMap);
 
@@ -275,7 +282,9 @@ public class MessageActivity extends AppCompatActivity {
                     if (chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
                             chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
                         mchat.add(chat);
+                        Log.i("aasd","GELEN MESAJ "+mchat);
                     }
+
 
                     messageAdapter = new MessageAdapter(MessageActivity.this, mchat, imageurl);
                     recyclerView.setAdapter(messageAdapter);

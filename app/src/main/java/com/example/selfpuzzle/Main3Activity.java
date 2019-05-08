@@ -104,9 +104,10 @@ public class Main3Activity extends AppCompatActivity {
                     viewPagerAdapter.addFragment(new ChatFragment(), "("+unread+") Chats");
                 }
                 viewPagerAdapter.addFragment(new UsersFragment(), "Users");
+                viewPagerAdapter.addFragment(new CameraFragment(), "Kamera");
                 viewPagerAdapter.addFragment(new ProfileFragment(), "Profile");
 
-                viewPagerAdapter.addFragment(new CameraFragment(), "Kamera");
+
                 viewPagerAdapter.addFragment(new StoryFragment(), "Story");
 
                 viewPager.setAdapter(viewPagerAdapter);

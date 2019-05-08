@@ -37,22 +37,19 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private int gelen;
     private List<User> mUsers;
     private boolean ischat;
-    private String[] gonderenID= new String[30] ;
-    int i = 0;
+    private String url;
+
 
     String theLastMessage;
 
-    public UserAdapter(Context mContext, List<User> mUsers, boolean ischat, int gelen,String gonderenID){
+    public UserAdapter(Context mContext, List<User> mUsers, boolean ischat, int gelen,String url){
 
         this.mUsers = mUsers;
         this.mContext = mContext;
         this.ischat = ischat;
-        this.gonderenID[i] = gonderenID;
-      //  this.gonderenID = gonderenID[i];
-        Log.i(TAG,"User Adapter yukarısı atama içi "+this.gonderenID[i ]);
-
+        this.url = url;
         this.gelen = gelen;
-        i++;
+
     }
 
     @NonNull
@@ -110,14 +107,23 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                     //users dan kişi seçildiğinde message activitye atmakta
                     // Intent intent = new Intent(mContext, MessageActivity.class);
                     Intent intent = new Intent(mContext, OtherUserActivity.class);
-                    Log.i(TAG,"User Adapter 1 "+gonderenID);
+
                     intent.putExtra("userid", user.getId());
                     mContext.startActivity(intent);
                 }
                 else if (gelen==3){
                     Intent intent = new Intent(mContext, MessageActivity.class);
-                    Log.i(TAG,"User Adapter 3 "+gonderenID);
+
                     intent.putExtra("userid", user.getId());
+                    intent.putExtra("gelen",gelen);
+                    mContext.startActivity(intent);
+                }
+                else if (gelen==4){
+                    Intent intent = new Intent(mContext, MessageActivity.class);
+                    intent.putExtra("userid", user.getId());
+                    intent.putExtra("gelen",gelen);
+                    intent.putExtra("url",url);
+                    Log.i("asd", "URL MESSAGEYE YOLLANAN "+url);
                     mContext.startActivity(intent);
                 }
             }

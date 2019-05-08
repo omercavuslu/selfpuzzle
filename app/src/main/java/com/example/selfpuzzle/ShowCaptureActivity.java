@@ -4,27 +4,36 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +41,13 @@ import static com.example.selfpuzzle.CameraFragment.tempFileImage;
 
 
 public class ShowCaptureActivity extends AppCompatActivity {
+    String mCurrentPhotoPath;
+    private static final String TAG = "myApp";
+    final String imgUrl = "https://firebasestorage.googleapis.com/v0/b/selfpuzzle-32f6c.appspot.com/o/captures%2F-Ld_CITYs4Mi26MV3cI_?alt=media&token=7dc073ac-4c88-4010-8ae8-12c6f82204f1";
+    private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 2;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    static final int REQUEST_PERMISSION_READ_EXTERNAL_STORAGE = 3;
+    static final int REQUEST_IMAGE_GALLERY = 4;
     String filePath;
     String Uid;
     int parcaSayisi;
@@ -40,26 +56,19 @@ public class ShowCaptureActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_capture);
+        ImageButton btn_puzzle_yap = findViewById(R.id.btn_puzzle_yap);
+        ImageButton btn_send_friend = findViewById(R.id.btn_send_friend);
         parcaSayisi=6;
 
 
         SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
-        // seekBar.setProgress(2);
-        //seekBar.incrementProgressBy(0);
-        //seekBar.setMax(20);
         final TextView seekBarValue = (TextView)findViewById(R.id.seekBarValue);
-        //seekBarValue.setText(tvRadius.getText().toString().trim());
-
-
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                //progress = progress / 2;
-                // progress = progress * 2;
 
-                //parcaSayisi = progress;
                 switch (progress){
 
                     case 0:
@@ -121,17 +130,57 @@ public class ShowCaptureActivity extends AppCompatActivity {
                 saveToStories();
             }
         });
-        Button mPuzzleYap = findViewById(R.id.puzzleyap);
-        mPuzzleYap.setOnClickListener(new View.OnClickListener() {
+        Button ResmiAl = findViewById(R.id.ResmiAl);
+        ResmiAl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                onImageFromCameraClick22();
+                ResmiFireDanAl();
+            }
+        });
 
+        btn_puzzle_yap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onImageFromCameraClick22();
+            }
+        });
+        btn_send_friend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               // Intent intent = new Intent(ShowCaptureActivity.this, ArkadasSecActivity.class);
+                //String filePathh= tempFileImage(ShowCaptureActivity.this,rotateBitmap,"name");
+               // intent.putExtra("mCurrentPhotoPath", filePathh);
+               // Log.i(TAG,"RESIM NEYMIS " +filePathh);
+               // intent.putExtra("deger",parcaSayisi);
+
+               // startActivity(intent);
+                saveToStories();
             }
         });
 
     }
+    private Bitmap my_image;
+    ImageView tempImageView;
+    private void ResmiFireDanAl() {
+    ImageView gecici = findViewById(R.id.gecici);
+
+
+                Glide.with(this).load("https://firebasestorage.googleapis.com/v0/b/selfpuzzle-32f6c.appspot.com/o/captures%2F-LdZGY2I85HEEJFb-4y_?alt=media&token=122bb576-3f76-40e7-9427-5317229654e4").into(gecici);
+        gecici.buildDrawingCache();
+        Bitmap bmap = gecici.getDrawingCache();
+
+
+        Intent intent = new Intent(this, PuzzleActivity.class);
+
+        String filePathh= tempFileImage(this,bmap,"name");
+        intent.putExtra("mCurrentPhotoPath", filePathh);
+        intent.putExtra("deger",parcaSayisi);
+        startActivity(intent);
+
+    }
+
+
     byte[] dataToUpload;
     private void saveToStories() {
 
@@ -146,15 +195,24 @@ public class ShowCaptureActivity extends AppCompatActivity {
         UploadTask uploadTask = filePath.putBytes(dataToUpload);
 
         uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+
                     @Override
                     public void onSuccess(Uri uri) {
                         Map newImage = new HashMap();
                         newImage.put("profileImageUrl", uri.toString());
+                        Log.i("asd","URL " + uri.toString());
                         // mDriverDatabase.updateChildren(newImage);
                         userStoryDb.updateChildren(newImage);
+
+
+                        Intent intent = new Intent(ShowCaptureActivity.this, ArkadasSecActivity.class);
+                        intent.putExtra("url",uri.toString());
+                        startActivity(intent);
+
                         finish();
                         return;
                     }
@@ -179,68 +237,8 @@ public class ShowCaptureActivity extends AppCompatActivity {
 
         return Bitmap.createBitmap(decodedBitmap,0,0,w,h,matrix,true);
     }
-    String mCurrentPhotoPath;
-
-    private static final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 2;
-    private static final int REQUEST_IMAGE_CAPTURE = 1;
-    static final int REQUEST_PERMISSION_READ_EXTERNAL_STORAGE = 3;
-    static final int REQUEST_IMAGE_GALLERY = 4;
-/*
-    public void onImageFromCameraClick22() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (this.getApplicationContext().getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA)) {//telefonda kamera olup olmadığını kontrol ediyor
-            File photoFile = null;
-            try {
-                photoFile = createImageFile2();
-            } catch (IOException e) {
-                //Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG);
-            }
-
-            if (photoFile != null) {
-                Uri photoUri = FileProvider.getUriForFile(this, this.getApplicationContext().getPackageName() + ".fileprovider", photoFile);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE);
-            }
-        }
-    }
-    private File createImageFile2() throws IOException {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            // permission not granted, initiate request
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
-        } else {
-            // Create an image file name
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            String imageFileName = "JPEG_" + timeStamp + "_";
-            File storageDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
-            File image = File.createTempFile(
-            */
-
-    //    imageFileName,  /* prefix */
-    //          ".jpg",         /* suffix */
-    //             storageDir      /* directory */
-      /*      );
-            mCurrentPhotoPath = image.getAbsolutePath(); // save this to use in the intent
-
-            return image;
-        }
-
-        return null;
-    }
-*/
-/*
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Intent intent = new Intent(this, PuzzleActivity.class);
 
 
-
-
-            intent.putExtra("mCurrentPhotoPath", rotateBitmap);
-            startActivity(intent);
-        }
-    }*/
 
     private void onImageFromCameraClick22(){
         Intent intent = new Intent(this, PuzzleActivity.class);

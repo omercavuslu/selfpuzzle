@@ -77,7 +77,7 @@ public class OtherUserActivity extends AppCompatActivity {
                 if (user.getImageURL().equals("default")){
                     image_profile.setImageResource(R.mipmap.ic_launcher);
                 } else {
-                    Glide.with(OtherUserActivity.this).load(user.getImageURL()).into(image_profile);
+                    Glide.with(getApplicationContext()).load(user.getImageURL()).into(image_profile);
                 }
             }
 

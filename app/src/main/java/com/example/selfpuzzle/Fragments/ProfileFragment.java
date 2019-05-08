@@ -14,12 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.selfpuzzle.Adapter.UserAdapter;
+import com.example.selfpuzzle.SplashScreenActivity;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -61,10 +63,11 @@ public class ProfileFragment extends Fragment {
     private static final int IMAGE_REQUEST = 1;
     private Uri imageUri;
     private StorageTask uploadTask;
-
+    private Button logout;
     private RecyclerView recyclerView;
     private UserAdapter userAdapter;
     private List<User> mUsers;
+
 
     EditText search_users;
 
@@ -73,17 +76,25 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
+       searchUsers();
 
         //kopyaladık
         recyclerView = view.findViewById(R.id.arkadasIstekleri);
        recyclerView.setHasFixedSize(true);
-       recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mUsers = new ArrayList<>();
-        String gecici=searchUsers();
-        Log.i(TAG,"ICERI ATILAN DEGER"+gecici);
-      //  readUsers(gecici);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        image_profile = view.findViewById(R.id.profile_image);
+        mUsers = new ArrayList<>();
+
+
+        logout = view.findViewById(R.id.logout);
+        logout.setOnClickListener(new View.OnClickListener() {
+                                      @Override
+                                      public void onClick(View view) {
+                                          LogOut();
+                                      }
+                                  }
+        );
+                image_profile = view.findViewById(R.id.profile_image);
         username = view.findViewById(R.id.username);
 
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
@@ -94,12 +105,14 @@ public class ProfileFragment extends Fragment {
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-                username.setText(user.getUsername());
-                if (user.getImageURL().equals("default")){
-                    image_profile.setImageResource(R.mipmap.ic_launcher);
-                } else {
-                    //Glide.with(getContext()).load(user.getImageURL()).into(image_profile);
+                if(isAdded()) {
+                    User user = dataSnapshot.getValue(User.class);
+                    username.setText(user.getUsername());
+                    if (user.getImageURL().equals("default")) {
+                        image_profile.setImageResource(R.mipmap.ic_launcher);
+                    } else {
+                        Glide.with(ProfileFragment.this).load(user.getImageURL()).into(image_profile);
+                    }
                 }
             }
 
@@ -198,7 +211,7 @@ public class ProfileFragment extends Fragment {
             }
         }
     }
-    static String temp;
+    static String temp ="";
     private String searchUsers() {
 
 
@@ -214,11 +227,11 @@ public class ProfileFragment extends Fragment {
                     for (DataSnapshot issue : dataSnapshot.getChildren()) {
                         // do something with the individual "issues"
                          temp = issue.getValue().toString();
-
+                        Log.i("ProfileFragment","saf hali "+temp);
                         temp = temp.substring(47,75);
-
+                        Log.i("ProfileFragment","kesilmişs hali "+temp);
                        // mUsers.add(user);
-                        readUsers(temp);
+                       readUsers(temp);
 
                     }
                 }
@@ -275,25 +288,26 @@ public class ProfileFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
 
-                //mUsers.clear();
+                mUsers.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         User user = snapshot.getValue(User.class);
-                        Log.i(TAG,"FOR İçi "+user.getId());
-
-                       // Log.i(TAG,tempp);
-
-
+                        Log.i(TAG,"ProfileFragment "+tempp);
+                        Log.i(TAG,"ProfileFragmentgetid "+user.getId());
                         if (user.getId().equals(tempp)) {
+                            if (!mUsers.contains(user)){
+                                mUsers.add(user);
+                                Log.i(TAG,"IF İçi "+user.getId());
+                            }
 
-                            Log.i(TAG,"IF İçi "+user.getId());
-
-                            mUsers.add(user);
                         }
 
                     }
-                Log.i(TAG,"User adaptere gondermeden once  "+tempp);
-                    userAdapter = new UserAdapter(getContext(), mUsers, false,2,tempp);
-                    recyclerView.setAdapter(userAdapter);
+                Log.i("İçi","User adaptere gondermeden once  "+tempp);
+
+                userAdapter = new UserAdapter(getContext(), mUsers, false,2,tempp);
+                Log.i("İçi",userAdapter.getItemCount()+"");
+                recyclerView.setAdapter(userAdapter);
+
 
             }
 
@@ -302,5 +316,12 @@ public class ProfileFragment extends Fragment {
 
             }
         });
+    }
+    private void LogOut() {
+        FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(getContext(), SplashScreenActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
     }
 }

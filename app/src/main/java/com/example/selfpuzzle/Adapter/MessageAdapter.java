@@ -34,6 +34,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         this.imageurl = imageurl;
     }
 
+
+    //MESAJLARIN ARKA PLANI BELİRLENİYOR
     @NonNull
     @Override
     public MessageAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

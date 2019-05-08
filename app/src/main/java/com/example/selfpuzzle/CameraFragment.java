@@ -18,6 +18,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -78,24 +79,19 @@ public class CameraFragment extends Fragment implements SurfaceHolder.Callback {
         }
 
         //layouttaki button tanımlamaları
-        Button mCapture = view.findViewById(R.id.capture);
-        Button mLogout = view.findViewById(R.id.logout);
 
-        //logout butonuna tıklandığında olacaklar ki o da logout fonksiyonunu çağırmakta
-        mLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LogOut();
-            }
-        });
+        ImageButton resim_cek = view.findViewById(R.id.resim_cek);
 
-        //Capture butonuna tıklandığında captureImage fonk çağırılacak
-        mCapture.setOnClickListener(new View.OnClickListener() {
+        resim_cek.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 captureImage();
             }
         });
+
+
+        //Capture butonuna tıklandığında captureImage fonk çağırılacak
+
         //creates a temporary file and return the absolute file path
 
         //burada kullanıcılara göstermek ya da başka bir kullanıcıya göndermek için resim hazırlanıyor.

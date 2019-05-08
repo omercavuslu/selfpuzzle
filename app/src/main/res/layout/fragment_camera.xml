@@ -10,18 +10,16 @@
         android:layout_height="match_parent"
         android:id="@+id/surfaceView"/>
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Log Out"
-        android:id="@+id/logout"/>
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="capture"
-        android:layout_gravity="bottom"
-        android:id="@+id/capture"/>
 
+
+
+    <ImageButton
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_gravity="bottom|center"
+        android:layout_marginBottom="18dp"
+        android:id="@+id/resim_cek"
+        android:background="@drawable/large_circle" />
 
 </FrameLayout>
