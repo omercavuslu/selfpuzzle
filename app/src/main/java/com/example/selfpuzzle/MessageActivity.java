@@ -2,6 +2,7 @@ package com.example.selfpuzzle;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -17,6 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -44,8 +48,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static com.example.selfpuzzle.CameraFragment.tempFileImage;
+
 public class MessageActivity extends AppCompatActivity {
 
+    private static final String TAG = "MessageActivity";
     CircleImageView profile_image;
     TextView username;
     FirebaseUser fuser;
@@ -59,7 +66,7 @@ public class MessageActivity extends AppCompatActivity {
     ValueEventListener seenListener;
     String userid;
     APIService apiService;
-    String url;
+    public String url;
     int gelen;
 
     boolean notify = false;
@@ -73,19 +80,24 @@ public class MessageActivity extends AppCompatActivity {
         userid = intent.getStringExtra("userid");
         gelen = intent.getIntExtra("gelen",3);
         Log.i("aasd","messageURL GELEN INT "+gelen);
-
+        url=intent.getStringExtra("url");
 
         if (gelen==4){
-            url=intent.getStringExtra("url");
-            Log.i("aasd","message URL  "+url);
-            sendMessage(fuser.getUid(), userid, url);
+            sendMessage(fuser.getUid(), userid, url,true);
+            Log.i("reycler View ","1." );
+
+
+
+
+
+            Log.i("resmmi","EVET ");
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {//GERİ TUŞU
             @Override
             public void onClick(View view) {
                 // and this
@@ -115,13 +127,15 @@ public class MessageActivity extends AppCompatActivity {
                 notify = true;
                 String msg = text_send.getText().toString();
                 if (!msg.equals("")){
-                    sendMessage(fuser.getUid(), userid, msg);
+                    sendMessage(fuser.getUid(), userid, msg,false);
                 } else {
                     Toast.makeText(MessageActivity.this, "You can't send empty message", Toast.LENGTH_SHORT).show();
                 }
                 text_send.setText("");
             }
         });
+
+
 
 
         reference = FirebaseDatabase.getInstance().getReference("Users").child(userid);
@@ -146,8 +160,150 @@ public class MessageActivity extends AppCompatActivity {
 
             }
         });
+/*
+       recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
+            @Override
+            public boolean onInterceptTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
+                Log.i("URL","TIKLADIN REİS");
+                reference = FirebaseDatabase.getInstance().getReference("Chats");
+                reference.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                            Chat chat = snapshot.getValue(Chat.class);
+
+                            if (chat.isResimmi()) {
+
+                                Glide.with(MessageActivity.this)
+                                        .asBitmap()
+                                        .load(chat.getMessage())
+                                        .into(new SimpleTarget<Bitmap>() {
+                                            @Override
+                                            public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                                                //imageView.setImageBitmap(resource);
+                                                onImageFromCameraClick222(resource);
+
+                                            }
+                                        });
+
+                            }
+
+
+
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+                return false;
+            }
+
+            @Override
+            public void onTouchEvent(@NonNull RecyclerView recyclerView, @NonNull MotionEvent motionEvent) {
+                Log.i("URL","TIKLADIN REİS 2.ye");
+            }
+
+            @Override
+            public void onRequestDisallowInterceptTouchEvent(boolean b) {
+                Log.i("URL","TIKLADIN REİS 3. ye");
+            }
+        });*/
+/*
+    recyclerView.setOnClickListener(new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            //int itemPosition = recyclerView.getChildLayoutPosition(v);
+           // String item = mList.get(itemPosition);
+            //Toast.makeText(mContext, item, Toast.LENGTH_LONG).show();
+            Log.i("URL","bu be  REİS 3. ye");
+        }
+    });*/
+
+        mchat = new ArrayList<>();
+        mchat.clear();
+        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference.addValueEventListener(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Chat chat = snapshot.getValue(Chat.class);
+                    //Log.i(TAG,"tıklandı position     "+ position);
+                    Log.i(TAG,"tıklandı mchatsize   " + mchat.size());
+                    if (chat.isResimmi()) {
+                        mchat.add(chat);
+
+
+                    }
+
+
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        recyclerView.addOnItemTouchListener(
+
+                new RecyclerItemClickListener(this, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View v, final int position) {
+
+                        Toast.makeText(MessageActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+
+
+
+
+
+                        Glide.with(MessageActivity.this)
+                                .asBitmap()
+                                .load(mchat.get(position).getMessage())
+                                .into(new SimpleTarget<Bitmap>() {
+                                    @Override
+                                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                                        //imageView.setImageBitmap(resource);
+                                        onImageFromCameraClick222(resource);
+
+                                    }
+                                });
+
+
+
+
+                    }
+                })
+        );
+
 
         seenMessage(userid);
+
+
+
+    }
+
+
+
+
+
+
+    private void onImageFromCameraClick222(Bitmap btmp){
+        Intent intent = new Intent(this, PuzzleActivity.class);
+
+        String filePathh= tempFileImage(this,btmp,"name");
+        intent.putExtra("mCurrentPhotoPath", filePathh);
+       // intent.putExtra("deger",parcaSayisi);
+        startActivity(intent);
     }
 
     private void seenMessage(final String userid){
@@ -172,7 +328,7 @@ public class MessageActivity extends AppCompatActivity {
         });
     }
 
-    private void sendMessage(String sender, final String receiver, String message){
+    private void sendMessage(String sender, final String receiver, String message,boolean resimmi){
 
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference();
         HashMap<String, Object> hashMap = new HashMap<>();
@@ -180,7 +336,7 @@ public class MessageActivity extends AppCompatActivity {
         hashMap.put("receiver", receiver);
         hashMap.put("message", message);
         hashMap.put("isseen", false);
-        hashMap.put("resimMi",false);
+        hashMap.put("resimmi",resimmi);
 
         reference.child("Chats").push().setValue(hashMap);
 
@@ -228,6 +384,7 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
     }
+
 
     private void sendNotifiaction(String receiver, final String username, final String message){
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
@@ -279,6 +436,23 @@ public class MessageActivity extends AppCompatActivity {
                 mchat.clear();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Chat chat = snapshot.getValue(Chat.class);
+                    Log.i("Resmmi",chat.isResimmi()+"");
+                    if (chat.isResimmi()){
+                        Log.i("URl",""+chat.getMessage());
+                        Glide.with(MessageActivity.this)
+                                .asBitmap()
+                                .load(chat.getMessage())
+                                .into(new SimpleTarget<Bitmap>() {
+                                    @Override
+                                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                                        //imageView.setImageBitmap(resource);
+                                        //onImageFromCameraClick222(resource);
+
+                                    }
+                                });
+
+                    }
+
                     if (chat.getReceiver().equals(myid) && chat.getSender().equals(userid) ||
                             chat.getReceiver().equals(userid) && chat.getSender().equals(myid)){
                         mchat.add(chat);

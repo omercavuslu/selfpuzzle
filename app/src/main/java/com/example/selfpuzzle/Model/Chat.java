@@ -6,12 +6,14 @@ public class Chat {
     private String receiver;
     private String message;
     private boolean isseen;
+    private boolean resimmi;
 
-    public Chat(String sender, String receiver, String message, boolean isseen) {
+    public Chat(String sender, String receiver, String message, boolean isseen,boolean resimmi) {
         this.sender = sender;
         this.receiver = receiver;
         this.message = message;
         this.isseen = isseen;
+        this.resimmi = resimmi;
     }
 
     public Chat() {
@@ -47,5 +49,13 @@ public class Chat {
 
     public void setIsseen(boolean isseen) {
         this.isseen = isseen;
+    }
+
+    public boolean isResimmi() {
+        return resimmi;
+    }
+
+    public void setResimmi(boolean resimmi) {
+        this.resimmi = resimmi;
     }
 }
