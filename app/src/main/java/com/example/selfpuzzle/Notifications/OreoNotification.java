@@ -12,8 +12,10 @@ import android.os.Build;
 
 public class OreoNotification extends ContextWrapper {
 
-    private static final String CHANNEL_ID = "dragosholban.com.androidpuzzlegame";
-    private static final String CHANNEL_NAME = "androidpuzzlegame";
+    //private static final String CHANNEL_ID = "dragosholban.com.androidpuzzlegame";
+    //private static final String CHANNEL_NAME = "androidpuzzlegame";
+    private static final String CHANNEL_ID = "com.example.selfpuzzle";
+    private static final String CHANNEL_NAME = "selfpuzzle";
     private NotificationManager notificationManager;
 
 

@@ -1,18 +1,19 @@
 package com.example.selfpuzzle;
 
-import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -51,7 +52,19 @@ public class Main3Activity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
 
-
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(Main3Activity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(Main3Activity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(Main3Activity.this,
+                        new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE},
+                        1);
+            } else {
+                //do something
+            }
+        } else {
+            //do something
+        }
 
         profile_image = findViewById(R.id.profile_image);
         username = findViewById(R.id.username);
@@ -65,7 +78,7 @@ public class Main3Activity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                 username.setText(user.getUsername());
                 if (user.getImageURL().equals("default")){
-                    profile_image.setImageResource(R.mipmap.ic_launcher);
+                    profile_image.setImageResource(R.drawable.ic_strategy_though_white);
                 } else {
 
                     //change this
@@ -98,17 +111,17 @@ public class Main3Activity extends AppCompatActivity {
                 }
 
                 if (unread == 0){
-                    viewPagerAdapter.addFragment(new ChatFragment(), "Chats");
+                    viewPagerAdapter.addFragment(new ChatFragment(), "Message");
                 }
                 else{
-                    viewPagerAdapter.addFragment(new ChatFragment(), "("+unread+") Chats");
+                    viewPagerAdapter.addFragment(new ChatFragment(), "("+unread+") Message");
                 }
                 viewPagerAdapter.addFragment(new UsersFragment(), "Users");
-                viewPagerAdapter.addFragment(new CameraFragment(), "Kamera");
+                viewPagerAdapter.addFragment(new CameraFragment(), "Camera");
                 viewPagerAdapter.addFragment(new ProfileFragment(), "Profile");
 
 
-                viewPagerAdapter.addFragment(new StoryFragment(), "Story");
+                viewPagerAdapter.addFragment(new StoryFragment(), "Galery");
 
                 viewPager.setAdapter(viewPagerAdapter);
 

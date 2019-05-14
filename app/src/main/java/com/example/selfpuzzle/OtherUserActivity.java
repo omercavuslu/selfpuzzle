@@ -54,7 +54,6 @@ public class OtherUserActivity extends AppCompatActivity {
                 btn_arkadas_ekle.setClickable(false);
             }
         });
-        TextView textView2 = findViewById(R.id.textView2);
         intent = getIntent();
         userid = intent.getStringExtra("userid");
 
@@ -75,7 +74,7 @@ public class OtherUserActivity extends AppCompatActivity {
                // Log.i(TAG,"OTHERUSERACTIVITY"+user.getUsername());
                 username.setText(user.getUsername());
                 if (user.getImageURL().equals("default")){
-                    image_profile.setImageResource(R.mipmap.ic_launcher);
+                    image_profile.setImageResource(R.drawable.ic_strategy_thought);
                 } else {
                     Glide.with(getApplicationContext()).load(user.getImageURL()).into(image_profile);
                 }

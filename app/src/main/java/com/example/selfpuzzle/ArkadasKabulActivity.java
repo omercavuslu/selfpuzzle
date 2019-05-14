@@ -4,10 +4,14 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.example.selfpuzzle.Model.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -20,10 +24,14 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class ArkadasKabulActivity extends AppCompatActivity {
 
     private static final String TAG = "myApp";
     Button btn_red;
+    TextView username;
+    CircleImageView image_profile;
     Button btn_kabul;
     Intent intent;
     String gonderenID;
@@ -32,6 +40,8 @@ public class ArkadasKabulActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_arkadas_kabul);
 
+        username = findViewById(R.id.username_other_user_kabul);
+        image_profile = findViewById(R.id.profile_image_other_user_kabul);
         btn_kabul = findViewById(R.id.btn_kabul);
         btn_red = findViewById(R.id.btn_red);
 
@@ -44,6 +54,27 @@ public class ArkadasKabulActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Log.i(TAG,"Arkadas Kabul activity on click "+gonderenID);
                 kabul();
+            }
+        });
+
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(gonderenID);
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                // Log.i(TAG,"OTHERUSERACTIVITY"+user.getUsername());
+                username.setText(user.getUsername());
+                if (user.getImageURL().equals("default")){
+                    image_profile.setImageResource(R.drawable.ic_strategy_thought);
+                } else {
+                    Glide.with(getApplicationContext()).load(user.getImageURL()).into(image_profile);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
             }
         });
 

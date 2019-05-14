@@ -45,7 +45,7 @@
         app:civ_border_color="#bfbfbf"
         android:id="@+id/img_off"
         android:visibility="gone"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/ic_strategy_thought"
         android:layout_below="@id/username"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="-15dp"

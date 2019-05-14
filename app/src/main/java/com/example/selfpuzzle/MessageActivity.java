@@ -3,6 +3,8 @@ package com.example.selfpuzzle;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -30,6 +32,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +68,7 @@ public class MessageActivity extends AppCompatActivity {
     List<Chat> mchat;
     RecyclerView recyclerView;
     Intent intent;
+    ArrayList<String> keys;
     ValueEventListener seenListener;
     String userid;
     APIService apiService;
@@ -146,7 +152,7 @@ public class MessageActivity extends AppCompatActivity {
                 User user = dataSnapshot.getValue(User.class);
                 username.setText(user.getUsername());
                 if (user.getImageURL().equals("default")){
-                    profile_image.setImageResource(R.mipmap.ic_launcher);
+                    profile_image.setImageResource(R.drawable.ic_strategy_thought);
                 } else {
                     //and this
                     Glide.with(getApplicationContext()).load(user.getImageURL()).into(profile_image);
@@ -226,6 +232,8 @@ public class MessageActivity extends AppCompatActivity {
     });*/
 
         mchat = new ArrayList<>();
+        keys = new ArrayList<String>();
+
         mchat.clear();
         reference = FirebaseDatabase.getInstance().getReference("Chats");
         reference.addValueEventListener(new ValueEventListener() {
@@ -239,8 +247,12 @@ public class MessageActivity extends AppCompatActivity {
                     Log.i(TAG,"tıklandı mchatsize   " + mchat.size());
                     if (chat.isResimmi()) {
                         mchat.add(chat);
+                        keys.add(snapshot.getKey());
 
 
+                    }else{
+                        mchat.add(null);
+                        keys.add(null);
                     }
 
 
@@ -261,22 +273,33 @@ public class MessageActivity extends AppCompatActivity {
                     public void onItemClick(View v, final int position) {
 
                         Toast.makeText(MessageActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+                        Log.i("glide içi",mchat.toString());
+                        Log.i("glide içi",keys.toString());
 
 
+                        if (mchat.get(position)!=null )
+                        {
+                            Log.i("saveImage","glide içi IF İÇİ NULL DEPİL "+keys.size()+"  "+(position));
+                            Log.i("saveImage","Girdiasdasd "+mchat.get(position));
+                            Glide.with(MessageActivity.this)
+                                    .asBitmap()
+                                    .load(mchat.get(position).getMessage())
+                                    .into(new SimpleTarget<Bitmap>() {
+                                        @Override
+                                        public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
+                                            //imageView.setImageBitmap(resource);
+                                            onImageFromCameraClick222(resource,keys.get(position));
+                                            Log.i("saveImage","glide içi "+keys.size()+"  "+(position));
+                                            //saveImage(resource,keys.get(position));
 
+                                        }
+                                    });
+                        }
+                        else{
+                            Log.i("saveImage","glide içi IF İÇİ NULL  "+keys.size()+"  "+(position));
 
+                        }
 
-                        Glide.with(MessageActivity.this)
-                                .asBitmap()
-                                .load(mchat.get(position).getMessage())
-                                .into(new SimpleTarget<Bitmap>() {
-                                    @Override
-                                    public void onResourceReady(Bitmap resource, Transition<? super Bitmap> transition) {
-                                        //imageView.setImageBitmap(resource);
-                                        onImageFromCameraClick222(resource);
-
-                                    }
-                                });
 
 
 
@@ -291,17 +314,58 @@ public class MessageActivity extends AppCompatActivity {
 
 
     }
+    private String saveImage(Bitmap image,String name) {
+        Log.i("saveImage","Girdi "+ name);
+        String savedImagePath = null;
+
+        //String imageFileName = "JPEG_" + "FILE_NAME" + ".jpg";
+        String imageFileName = name + ".jpg";
+        File storageDir = new File(            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                + "/selfpuzzle");
+        boolean success = true;
+        if (!storageDir.exists()) {
+            success = storageDir.mkdirs();
+            Log.i("saveImage","!success "+success);
+        }
+        if (success) {
+            Log.i("saveImage","success");
+            File imageFile = new File(storageDir, imageFileName);
+            savedImagePath = imageFile.getAbsolutePath();
+            try {
+                OutputStream fOut = new FileOutputStream(imageFile);
+                image.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+                Log.i("saveImage","try");
+                fOut.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // Add the image to the system gallery
+            galleryAddPic(savedImagePath);
+            Toast.makeText(this, "IMAGE SAVED", Toast.LENGTH_LONG).show();
+            Log.i("saveImage","image saved");
+        }
+        return savedImagePath;
+    }
+
+    private void galleryAddPic(String imagePath) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(imagePath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        sendBroadcast(mediaScanIntent);
+    }
 
 
 
 
 
-
-    private void onImageFromCameraClick222(Bitmap btmp){
+    private void onImageFromCameraClick222(Bitmap btmp,String name){
         Intent intent = new Intent(this, PuzzleActivity.class);
 
         String filePathh= tempFileImage(this,btmp,"name");
         intent.putExtra("mCurrentPhotoPath", filePathh);
+        intent.putExtra("name",name);
        // intent.putExtra("deger",parcaSayisi);
         startActivity(intent);
     }
@@ -394,7 +458,7 @@ public class MessageActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()){
                     Token token = snapshot.getValue(Token.class);
-                    Data data = new Data(fuser.getUid(), R.mipmap.ic_launcher, username+": "+message, "New Message",
+                    Data data = new Data(fuser.getUid(), R.mipmap.ic_launcher, username+": "+message, "Yeni Mesaj",
                             userid);
 
                     Sender sender = new Sender(data, token.getToken());
@@ -404,8 +468,10 @@ public class MessageActivity extends AppCompatActivity {
                                 @Override
                                 public void onResponse(Call<MyResponse> call, Response<MyResponse> response) {
                                     if (response.code() == 200){
+                                        Log.i(TAG,"Notification göndermede hata var responce code " +response.body().success );
                                         if (response.body().success != 1){
-                                            Toast.makeText(MessageActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                                           // Toast.makeText(MessageActivity.this, "Failed!", Toast.LENGTH_SHORT).show();
+                                            Log.i(TAG,"Notification göndermede hata var success !=");
                                         }
                                     }
                                 }

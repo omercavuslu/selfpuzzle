@@ -16,6 +16,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,8 +45,13 @@ public class StoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_story,container,false);
 
         AssetManager am = getActivity().getAssets();
+        File dir = new File(Environment.getExternalStorageDirectory() + "/selfpuzzle");
+
         try {
             final String[] files  = am.list("img");
+          //  for (int i =0; i<files.length;i++){
+          //      Log.i("gridView Dolumu",files[i]);
+          //  }
 
             GridView grid = view.findViewById(R.id.grid);
             grid.setAdapter(new ImageAdapter(getActivity()));
@@ -54,6 +60,7 @@ public class StoryFragment extends Fragment {
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                     Intent intent = new Intent(getContext(), PuzzleActivity.class);//getApplicationContext
                     intent.putExtra("assetName", files[i % files.length]);
+
                     startActivity(intent);
                 }
             });

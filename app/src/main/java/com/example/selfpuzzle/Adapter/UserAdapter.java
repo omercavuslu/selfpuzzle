@@ -38,6 +38,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
     private List<User> mUsers;
     private boolean ischat;
     private String url;
+    static boolean resimmi;
 
 
     String theLastMessage;
@@ -100,6 +101,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                 if (gelen==2){
                     Intent intent = new Intent(mContext, ArkadasKabulActivity.class);
                     intent.putExtra("gonderenID",user.getId());
+
                     Log.i(TAG,"User Adapter 2 "+user.getId());
                     mContext.startActivity(intent);
                 }
@@ -169,6 +171,8 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                         if (chat.getReceiver().equals(firebaseUser.getUid()) && chat.getSender().equals(userid) ||
                                 chat.getReceiver().equals(userid) && chat.getSender().equals(firebaseUser.getUid())) {
                             theLastMessage = chat.getMessage();
+                            resimmi = chat.isResimmi();
+                            Log.i("lastmessage"," "+resimmi);
                         }
                     }
                 }
@@ -179,7 +183,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
                         break;
 
                     default:
-                        last_msg.setText(theLastMessage);
+                        if (resimmi == true) {
+
+                            last_msg.setText("Kullanıcı size bir resim gönderdi");
+                        }
+                        else{
+                            last_msg.setText(theLastMessage);
+                        }
+
                         break;
                 }
 

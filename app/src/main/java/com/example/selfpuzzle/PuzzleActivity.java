@@ -15,16 +15,23 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Random;
 
 import static java.lang.Math.abs;
@@ -33,10 +40,13 @@ public class PuzzleActivity extends AppCompatActivity {
     ArrayList<PuzzlePiece> pieces;
     String mCurrentPhotoPath;
     String mCurrentPhotoUri;
+    static Bitmap resim;
+    static String fileName;
     int parcaSayisi;
     int piecesNumber = 12;
     int rows = 4;
     int cols = 3;
+    private static final String TAG = "PuzzleActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,16 +59,13 @@ public class PuzzleActivity extends AppCompatActivity {
         Intent intent = getIntent();
         parcaSayisi = intent.getIntExtra("deger",0);
         final String assetName = intent.getStringExtra("assetName");
+         fileName = intent.getStringExtra("name");
 
 
       /*  final String temp =  intent.getStringExtra("deger");
         parcaSayisi = Integer.parseInt(temp);
 */
         mCurrentPhotoPath = intent.getStringExtra("mCurrentPhotoPath");
-
-
-
-
 
         mCurrentPhotoUri = intent.getStringExtra("mCurrentPhotoUri");
 
@@ -89,6 +96,52 @@ public class PuzzleActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+
+    private String saveImage(Bitmap image,String name) {
+        if (name!=null){
+            Log.i("saveImage","Girdi "+ name);
+            String savedImagePath = null;
+
+            //String imageFileName = "JPEG_" + "FILE_NAME" + ".jpg";
+            String imageFileName = name + ".jpg";
+            File storageDir = new File(            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                    + "/selfpuzzle");
+            boolean success = true;
+            if (!storageDir.exists()) {
+                success = storageDir.mkdirs();
+                Log.i("saveImage","!success "+success);
+            }
+            if (success) {
+                Log.i("saveImage","success");
+                File imageFile = new File(storageDir, imageFileName);
+                savedImagePath = imageFile.getAbsolutePath();
+                try {
+                    OutputStream fOut = new FileOutputStream(imageFile);
+                    image.compress(Bitmap.CompressFormat.JPEG, 100, fOut);
+                    Log.i("saveImage","try");
+                    fOut.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // Add the image to the system gallery
+                galleryAddPic(savedImagePath);
+                Toast.makeText(this, "Resim Galeriye Kaydedildi", Toast.LENGTH_LONG).show();
+                Log.i("saveImage","image saved");
+            }
+            return savedImagePath;
+        }
+        return null;
+    }
+
+    private void galleryAddPic(String imagePath) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(imagePath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        sendBroadcast(mediaScanIntent);
     }
 
     private void setPicFromAsset(String assetName, ImageView imageView) {
@@ -307,7 +360,10 @@ public class PuzzleActivity extends AppCompatActivity {
     }
 
     public void checkGameOver() {
+        Log.i(TAG,"Oyun Bitti "+fileName);
         if (isGameOver()) {
+
+           saveImage(resim,fileName);
             finish();
         }
     }
@@ -322,7 +378,7 @@ public class PuzzleActivity extends AppCompatActivity {
         return true;
     }
 
-    private void setPicFromPath(String mCurrentPhotoPath, ImageView imageView) {
+    private Bitmap setPicFromPath(String mCurrentPhotoPath, ImageView imageView) {
         // Get the dimensions of the View
         int targetW = imageView.getWidth();
         int targetH = imageView.getHeight();
@@ -365,6 +421,8 @@ public class PuzzleActivity extends AppCompatActivity {
         }
 
         imageView.setImageBitmap(rotatedBitmap);
+        resim = rotatedBitmap;
+        return rotatedBitmap;
     }
 
     public static Bitmap rotateImage(Bitmap source, float angle) {
