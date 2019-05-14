@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="dragosholban.com.androidpuzzlegame.PuzzleActivity"
+    tools:context="com.example.selfpuzzle.PuzzleActivity"
     android:background="@drawable/table_background">
 
     <ImageView
@@ -35,7 +35,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/photo"
-        android:alpha="0.5" />
+        android:alpha="0.0" />
 
     <RelativeLayout
         android:id="@+id/layout"

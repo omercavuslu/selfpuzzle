@@ -272,7 +272,7 @@ public class MessageActivity extends AppCompatActivity {
                     @Override
                     public void onItemClick(View v, final int position) {
 
-                        Toast.makeText(MessageActivity.this, "" + position, Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(MessageActivity.this, "" + position, Toast.LENGTH_SHORT).show();
                         Log.i("glide içi",mchat.toString());
                         Log.i("glide içi",keys.toString());
 
