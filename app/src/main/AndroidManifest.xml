@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.selfpuzzle">
+    package="com.omercavuslu.selfpuzzle">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -21,18 +21,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".ArkadasSecActivity"></activity>
-        <activity android:name=".ArkadasKabulActivity" />
-        <activity android:name=".OtherUserActivity" />
+        <activity android:name="com.omercavuslu.selfpuzzle.ArkadasSecActivity"></activity>
+        <activity android:name="com.omercavuslu.selfpuzzle.ArkadasKabulActivity" />
+        <activity android:name="com.omercavuslu.selfpuzzle.OtherUserActivity" />
         <activity
-            android:name=".ResetPasswordActivity"
-            android:parentActivityName=".LoginActivity" />
-        <activity android:name=".RegistrationActivity" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".ShowCaptureActivity" />
-        <activity android:name=".ChooseLoginRegistrationActivity" />
+            android:name="com.omercavuslu.selfpuzzle.ResetPasswordActivity"
+            android:parentActivityName="com.omercavuslu.selfpuzzle.LoginActivity" />
+        <activity android:name="com.omercavuslu.selfpuzzle.RegistrationActivity" />
+        <activity android:name="com.omercavuslu.selfpuzzle.LoginActivity" />
+        <activity android:name="com.omercavuslu.selfpuzzle.ShowCaptureActivity" />
+        <activity android:name="com.omercavuslu.selfpuzzle.ChooseLoginRegistrationActivity" />
         <activity
-            android:name=".SplashScreenActivity"
+            android:name="com.omercavuslu.selfpuzzle.SplashScreenActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,8 +40,8 @@
                 <category android:name="android.intent.category.LAUNCHER"  android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
             </intent-filter>
         </activity>
-        <activity android:name=".PuzzleActivity" />
-        <activity android:name=".MainActivity" />
+        <activity android:name="com.omercavuslu.selfpuzzle.PuzzleActivity" />
+        <activity android:name="com.omercavuslu.selfpuzzle.MainActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -53,11 +53,11 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".Main3Activity" />
-        <activity android:name=".MessageActivity" />
+        <activity android:name="com.omercavuslu.selfpuzzle.Main3Activity" />
+        <activity android:name="com.omercavuslu.selfpuzzle.MessageActivity" />
 
         <service
-            android:name=".Notifications.MyFirebaseIdService"
+            android:name="com.omercavuslu.selfpuzzle.Notifications.MyFirebaseIdService"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -65,7 +65,7 @@
             </intent-filter>
         </service>
         <service
-            android:name=".Notifications.MyFirebaseMessaging"
+            android:name="com.omercavuslu.selfpuzzle.Notifications.MyFirebaseMessaging"
             android:enabled="true"
             android:exported="true">
             <intent-filter>

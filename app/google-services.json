@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:18582057917:android:20f417fde8526de5",
         "android_client_info": {
-          "package_name": "com.example.selfpuzzle"
+          "package_name": "com.omercavuslu.selfpuzzle"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "18582057917-k4u92mem43li7keube88aq9e3tgtnbnj.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.selfpuzzle",
+            "package_name": "com.omercavuslu.selfpuzzle",
             "certificate_hash": "2cae7588bdd1bc379e57e98044d69c341ca4457e"
           }
         },
